@@ -11,8 +11,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 //Modules
 import { ShareModule } from './share/share.module';
-import { ViewListComponent } from './view-list/view-list.component';
 import { OperationsModule } from './operations/operations.module';
+
+//modelModule:
+import { ModalModule } from 'ngx-bootstrap/modal';
+
+//Components
+import { ViewListComponent } from './view-list/view-list.component';
 import { LayoutsComponent } from './layouts/layouts.component';
 
 
@@ -31,6 +36,7 @@ import { LayoutsComponent } from './layouts/layouts.component';
     ReactiveFormsModule,
     ShareModule,
     OperationsModule,
+    ModalModule.forRoot(),
    
   ],
   providers: [],
