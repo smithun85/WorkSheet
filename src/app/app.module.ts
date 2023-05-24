@@ -20,6 +20,9 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { ViewListComponent } from './view-list/view-list.component';
 import { LayoutsComponent } from './layouts/layouts.component';
 
+//http for server;
+import { HttpClientModule } from '@angular/common/http';
+
 
 
 @NgModule({
@@ -37,6 +40,7 @@ import { LayoutsComponent } from './layouts/layouts.component';
     ShareModule,
     OperationsModule,
     ModalModule.forRoot(),
+    HttpClientModule
    
   ],
   providers: [],

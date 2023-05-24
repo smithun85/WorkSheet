@@ -51,7 +51,7 @@
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">label</th>
+      <th scope="col">Title</th>
       <th scope="col">Description</th>
       <th scope="col">Action</th>
     </tr>
@@ -65,9 +65,11 @@
         <!-- <button (click)="goToEditForm()">Edit</button> -->
         <div class="worksheet">
           <!-- Modal -->
-          <button type="button" class="btn btn-primary" (click)="openModalEdit(edit)">
+          <button type="button" class="btn btn-primary" (click)="openModalEdit(edit, work.id)">
             edit
           </button>
+
+          <button type="button" class="btn btn-danger" (click)="deleteWork(work.id)">Delete</button>
         
           <ng-template #edit>
             <div class="modal-header">
@@ -82,7 +84,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <form class="form" [formGroup]="workListForm" (ngSubmit)="onSubmitEdit()">
+              <form class="form" [formGroup]="workListForm" (ngSubmit)="onSubmitEdit(work.id)">
                 <div class="mb-3">
                   <label for="exampleFormControlInput1" class="form-label">Title</label>
                   <input
@@ -110,7 +112,6 @@
             </div>
           </ng-template>
         </div>
-        <button>Delete</button>
       </td>
     </tr>
   </tbody>
