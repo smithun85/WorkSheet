@@ -41,6 +41,12 @@ export class ViewListComponent implements OnInit{
 
   openModalAdd(add: TemplateRef<any>) {
     this.modalRef = this.modalService.show(add);
+    this.workListForm.reset()
+  }
+
+  //
+  resetForm(){
+    this.workListForm.reset()
   }
 
   openModalEdit(edit: TemplateRef<any>, id:number) {
@@ -60,6 +66,7 @@ export class ViewListComponent implements OnInit{
       this.workListForm.patchValue(this.workUpdatedData)
     })
   }
+  
 
 //get Work_Data
 getData(){
