@@ -11,10 +11,17 @@ export class WorksApiService {
 
   constructor(private http:HttpClient) { }
 
+  //get the work data
   getAllData(): Observable<any> {
     return this.http.get(`${this.baseURL}/work_flow`)
  };
 
+ //get the work data by id
+ getDataById(id:number):Observable<any>{
+  return this.http.get(`${this.baseURL}/work_flow/${id}`)
+ }
+
+ //Post the work data
  postWorkData(formData:any):Observable<any>{
   console.log(formData);
   return this.http.post(`${this.baseURL}/work_flow`, formData)

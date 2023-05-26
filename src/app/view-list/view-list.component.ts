@@ -1,4 +1,4 @@
-import { Component , OnInit, TemplateRef} from '@angular/core';
+import { Component , OnInit, TemplateRef, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -12,6 +12,7 @@ import { Works } from '../works-interface';
   styleUrls: ['./view-list.component.scss']
 })
 export class ViewListComponent implements OnInit{
+  @ViewChild('modalRef')
 
   modalRef?: BsModalRef;
   workListForm:FormGroup | any
@@ -42,9 +43,10 @@ export class ViewListComponent implements OnInit{
   openModalAdd(add: TemplateRef<any>) {
     this.modalRef = this.modalService.show(add);
     this.workListForm.reset()
+
   }
 
-  //
+  
   resetForm(){
     this.workListForm.reset()
   }
@@ -79,16 +81,18 @@ getData(){
 
 //Post Work_Data
   onSubmitAdd(){
-    console.log("Form_value",this.workListForm.value);
-    // this.workData.push(this.workListForm.value)
+    // console.log("Form_value",this.workListForm.value);
     this.api.postWorkData(this.workListForm.value)
     .subscribe( res =>{
-      // console.log("Post_data",res);
+      console.log("Post_data",res.ResultResponse.data.id);
       this.getData();
       this.workListForm.reset()
+     
     })
    
     console.log("WorkData:",this.workData);
+
+    this.router.navigate(['inputfields'])
     
    }
 

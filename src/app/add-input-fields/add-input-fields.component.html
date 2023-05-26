@@ -1,0 +1,312 @@
+<div class="container">
+  <!-- <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>test</td>
+        <td>test</td>
+      </tr>
+    </tbody>
+  </table> -->
+<h2 class="heading"><span>Workflow</span></h2>
+  <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()">
+    <table class="table table-bordered" formArrayName="fields">
+      <tbody>
+        <tr
+          *ngFor="let quantity of fields().controls; let i = index"
+          [formGroupName]="i"
+        >
+          <td>
+            <input
+              type="text"
+              placeholder="Field_Name"
+              formControlName="fieldName"
+              class="form-control"
+            />
+          </td>
+          <td>
+            <input
+              type="text"
+              placeholder="Field_type"
+              formControlName="fieldType"
+              class="form-control"
+            />
+          </td>
+          <td>
+            <input
+              type="text"
+              placeholder="Required"
+              formControlName="require"
+              class="form-control"
+            />
+            
+          </td>
+          <!-- <td>
+            <button (click)="removeField(i)" class="btn btn-danger">
+              Remove
+            </button>
+          </td> -->
+        </tr>
+        <button type="button" (click)="addField()" class="btn btn-primary">
+          Add action Field
+        </button>
+      </tbody>
+    </table>
+  </form>
+
+  <div class="select-option">
+    <div class="select-1">
+      <select
+        class="btn btn-primary"  aria-label="Default select example"
+        (change)="changedOption($event)"
+              
+      >
+        <option  class="disabled" disabled selected>Select</option>
+        <option [ngValue]="item"  *ngFor="let item of workflow">{{item}}</option>
+      </select>
+    </div>
+
+    <div *ngIf="actionValue" class="select-1">
+      <select class="btn btn-success" (change)="changedActions($event)">
+        <option class="disabled" disabled selected>Select Actions</option>
+        <option [ngValue]="item.action" *ngFor="let item of actions">
+          {{ item.action }}
+        </option>
+      </select>
+    </div>
+
+    <div *ngIf="conditionValue" class="select-1">
+      <!-- <select class="btn btn-success" (change)="changedConditions($event)">
+        <option class="disabled" disabled selected>Select Conditions</option>
+        <option [ngValue]="item.condition" *ngFor="let item of conditions">
+          {{ item.condition }}
+        </option>
+      </select> -->
+     
+      <form [formGroup]="registrationForm" (ngSubmit)="conditionSubmit()">
+      
+        <div class="d-grid">
+          <select
+            class="custom-select mb-3"
+            (change)="changeCity($event)"
+            formControlName="cityName"
+          >
+            <option value="">Choose Field_Name</option>
+            <option *ngFor="let field of fieldsName" [ngValue]="field">
+              {{ field }}
+            </option>
+          </select>
+          <!-- error block -->
+          <div class="invalid-feedback" *ngIf="isSubmitted && cityName?.invalid">
+            <sup>*</sup>Please provide city name
+          </div>
+        </div>
+        <div class="d-grid">
+          <select
+            class="custom-select mb-3"
+            (change)="changeCity($event)"
+            formControlName="cityName"
+          >
+            <option value="">Choose Field_Name</option>
+            <option *ngFor="let field of fieldsName" [ngValue]="field">
+              {{ field }}
+            </option>
+          </select>
+          <!-- error block -->
+          <div class="invalid-feedback" *ngIf="isSubmitted && cityName?.invalid">
+            <sup>*</sup>Please provide city name
+          </div>
+         
+        </div>
+
+        <div class="mb-3">
+          <input
+            type="type"
+            class="form-control"
+            placeholder="value"
+            formControlName="value"
+          />
+        </div>
+        <button type="submit" class="btn btn-danger btn-lg btn-block">
+          Submit
+        </button>
+        
+      </form>
+    </div>
+  </div>
+
+  <!-- =======ACTIONS:Form========== -->
+  <div class="action-select">
+    <div class="action-form" *ngIf="email_Form">
+      <h2>Email</h2>
+      <div class="common-form">
+        <form class="form" [formGroup]="emailForm" (ngSubmit)="emailSubmit()">
+          <div class="mb-3">
+            <input
+              type="type"
+              class="form-control"
+              placeholder="Subject"
+              formControlName="subject"
+            />
+          </div>
+          <div class="mb-3">
+            <textarea
+              class="form-control"
+              rows="3"
+              placeholder="Body"
+              formControlName="body"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="To"
+              formControlName="to"
+            />
+          </div>
+          <button>Submit</button>
+        </form>
+        <p></p>
+        <div>{{emailForm.value | json }}</div>
+      </div>
+    </div>
+
+
+   
+
+    <div class="action-form" *ngIf="message_Form">
+      <h2>Message</h2>
+      <div class="common-form">
+        <form class="form" [formGroup]="messageForm" (ngSubmit)=" messageSubmit()">
+          <div class="mb-3">
+            <textarea
+              class="form-control"
+              rows="3"
+              placeholder="Body"
+              formControlName="body"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="To"
+              formControlName="to"
+            />
+          </div>
+          <button>Submit</button>
+        </form>
+        <p></p>
+        <div>{{messageForm.value | json }}</div>
+      </div>
+    </div>
+
+    <div class="action-form" *ngIf="api_Form">
+      <h2>Call_api</h2>
+      <div class="common-form">
+        <form class="form" [formGroup]="apiForm" (ngSubmit)="apiSubmit()">
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="url"
+              formControlName="url"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Type"
+              formControlName="type"
+            />
+          </div>
+          <div class="mb-3">
+            <textarea
+              class="form-control"
+              rows="3"
+              placeholder="Body"
+              formControlName="body"
+            ></textarea>
+          </div>
+          <button>Submit</button>
+        </form>
+        <div>{{apiForm.value | json }}</div>
+      </div>
+    </div>
+
+    <div class="action-form" *ngIf="workflow_Form">
+      <h2>Workflow</h2>
+      <div class="common-form">
+        <form
+          class="form"
+          [formGroup]="workflowForm"
+          (ngSubmit)="workflowSubmit()"
+        >
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              rows="3"
+              placeholder="workflow"
+              formControlName="workflow"
+            />
+          </div>
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              rows="3"
+              placeholder="Input_Value"
+              formControlName="input_Value"
+            />
+          </div>
+          <button>Submit</button>
+        </form>
+        <div>{{workflowForm.value | json }}</div>
+      </div>
+    </div>
+
+    <div class="action-form" *ngIf="logic_Form">
+      <h2>Logic</h2>
+      <div class="common-form">
+        <form class="form" (ngSubmit)="logicSubmit()">
+          <div class="mb-3">
+            <textarea
+              type="text"
+              class="form-control"
+              rows="3"
+              placeholder="logic"
+              [formControl]="logicForm"
+            ></textarea>
+          </div>
+          <button>Submit</button>
+        </form>
+        <div>{{logicForm.value | json }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======CONDITIONS============= -->
+
+  <div class="condition-select">
+    <div class="condition" *ngIf="condition_Field">
+      <h2>Condtion for Fields</h2>
+    </div>
+
+    <div class="condition" *ngIf="condition_Option">
+      <h2>Conditions for options</h2>
+    </div>
+
+    <div class="condition" *ngIf="condition_Value">
+      <h2>Conditions for value</h2>
+    </div>
+  </div>
+
+</div>

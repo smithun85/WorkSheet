@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 //Modules
 import { ShareModule } from './share/share.module';
 import { OperationsModule } from './operations/operations.module';
+import { ActionFormsModule } from './action-forms/action-forms.module';
 
 //modelModule:
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -22,6 +23,12 @@ import { LayoutsComponent } from './layouts/layouts.component';
 
 //http for server;
 import { HttpClientModule } from '@angular/common/http';
+import { AddInputFieldsComponent } from './add-input-fields/add-input-fields.component';
+
+//dropdown
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { NgxSelectModule } from 'ngx-select-ex';
+
 
 
 
@@ -29,7 +36,8 @@ import { HttpClientModule } from '@angular/common/http';
   declarations: [
     AppComponent,
     ViewListComponent,
-    LayoutsComponent,   
+    LayoutsComponent,
+    AddInputFieldsComponent, 
   ],
   imports: [
     BrowserModule,
@@ -40,7 +48,10 @@ import { HttpClientModule } from '@angular/common/http';
     ShareModule,
     OperationsModule,
     ModalModule.forRoot(),
-    HttpClientModule
+    HttpClientModule,
+    BsDropdownModule.forRoot(),
+    ActionFormsModule,
+    NgxSelectModule,
    
   ],
   providers: [],

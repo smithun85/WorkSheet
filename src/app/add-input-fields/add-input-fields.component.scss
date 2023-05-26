@@ -1,0 +1,145 @@
+.dropdown-menu li {
+    position: relative;
+    }
+    .dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+    }
+    .dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+    }
+    .dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+    }
+
+
+
+    // ==========================
+    .heading{
+        display:flex;
+        justify-content: center;
+    }
+.select-option{
+    display: flex;
+    flex-direction: column;
+    // justify-content: end;
+    // align-items: flex-end;
+    gap: 20px;
+}
+    select{
+        padding: 10px;
+        cursor: pointer;
+        position: relative;
+    
+    };
+    option{
+        background-color: rgb(226, 224, 224);
+        color: rgb(12, 11, 11);
+        // position: absolute;
+        // top: 0;
+        // right: 0;
+        // bottom: 0;
+        // left: 0;
+        padding: 5px   !important;
+        font-weight: bold;
+    };
+   
+    .disabled{
+        color:white;
+        background-color: #fff;
+         position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    .action-form, .condition-select{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form{
+        width: 400px;
+        height: auto;
+       
+    }
+
+
+
+    // =========Conditions================
+    label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 6px;
+      }
+      .group-gap {
+        margin-bottom: 40px;
+      }
+      .btn.focus,
+      .btn:focus,
+      .form-control:focus,
+      .custom-select:focus,
+      .custom-select:focus {
+        box-shadow: none;
+      }
+      .form-control:focus,
+      .custom-select:focus {
+        border: 1px solid #f63240;
+      }
+      
+      .btn-group-lg > .btn,
+      .btn-lg {
+        padding: 13px 15px 15px;
+        font-size: 16px;
+        border-radius: 0;
+      }
+      .form-control {
+        height: auto;
+        padding: 15px;
+        font-size: 14px;
+        color: #fff;
+        border-radius: 0;
+        background: #fbbe02;
+        border: 1px solid #f63240;
+      }
+      .custom-select {
+        height: auto;
+        padding: 15px;
+        font-size: 26px;
+        cursor: pointer;
+        font-weight: 400;
+        color: #000;
+        background-color: white;
+        border: 2px solid #000;
+      }
+      .custom-control-input:checked ~ .custom-control-label::before {
+        border-color: #e91e63;
+        background-color: #e91e63;
+      }
+      .custom-control-input:focus ~ .custom-control-label::before {
+        box-shadow: none;
+      }
+      .custom-control-label {
+        cursor: pointer;
+      }
+      .error:focus,
+      .error {
+        border-color: #e91e63;
+        color: #e91e63;
+      }
+      .invalid-feedback {
+        color: #e91e63;
+      }
+      .btn-danger,
+      body .btn-danger:hover {
+        background: #f63240;
+        border-color: #f63240;
+        color: #fff;
+      }
