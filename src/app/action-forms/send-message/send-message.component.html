@@ -1,0 +1,13 @@
+<p>send-message works!</p>
+
+<form class="form" [formGroup]="workListForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Title</label>
+      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="title" formControlName="title">
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Description" formControlName="description"></textarea>
+    </div>
+    <button>Submit</button>
+  </form>

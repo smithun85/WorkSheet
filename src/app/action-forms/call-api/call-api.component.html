@@ -1,0 +1,17 @@
+<p>call-api works!</p>
+<form class="form" [formGroup]="workListForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">URL</label>
+      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="URL" formControlName="url">
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Type</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Type" formControlName="type"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="exampleFormControlTextarea1" class="form-label">Body</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Body" formControlName="body"></textarea>
+      </div>
+    <button>Submit</button>
+  </form>
