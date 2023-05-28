@@ -29,7 +29,6 @@ export class AddInputFieldsComponent implements OnInit{
     {action:'custom_logic', path:'logic'},
   ];
 
-
   isSubmitted = false;
   fieldsName: string[] = ['input', 'textArea', 'select'];
   fieldsType:string[] = ['text','number','gmail','password','radio']
