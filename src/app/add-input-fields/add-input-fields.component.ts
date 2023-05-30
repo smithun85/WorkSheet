@@ -18,6 +18,19 @@ export class AddInputFieldsComponent implements OnInit{
 
   workData?:Works 
   fieldForm: FormGroup;
+  fieldformData:any ;
+  conditionForm: FormGroup | any;
+  conditionFormData:any 
+  // public result:Array<any> = [{
+  //   field_Name:'',
+  //   field_Type:'',
+  //   required:false,
+  //   condition_Operator:'',
+  //   condition_Value:''
+  // }]
+  public result:Array<any>= []
+  
+
   
   workflow:string[] = ['Actions', 'Conditions']
   
@@ -29,28 +42,32 @@ export class AddInputFieldsComponent implements OnInit{
     {action:'custom_logic', path:'logic'},
   ];
 
-  conditions:Array<any>=[
-    {condition:'fields'},
-    {condition:'options'},
-    {condition:'value'},
-  ]
-
-
-  isSubmitted = false;
-  fieldsName: string[] = ['input', 'textArea', 'radio button', 'select'];
+  isAdd:boolean = false
+  isSubmitted:boolean = false;
+  isSubmittedCondition:boolean = false;
+  
+  fieldsType:string[] = ['text','number','email','password','radio'];
+  condition_Operator:Array<any> = [
+    {name:'equal to', symbol:'='},
+    {name:'greater than', symbol:'>'},
+    {name:'less than', symbol:'<'},
+    {name:'greater than or equal to', symbol:'=>'},
+    {name:'less than or equal to', symbol:'=<'},
+    {name:'AND', symbol:'&&'},
+    {name:'OR', symbol:'||'},
+    {name:'NOT', symbol:'!'},
+  ];
 
   actionValue:boolean = false
   conditionValue:boolean = false;
+  isPlusSubmitted:boolean = false
 
   email_Form:boolean = false
   message_Form:boolean = false
   api_Form:boolean = false
   workflow_Form:boolean = false
   logic_Form:boolean = false
-
-  condition_Field:boolean = false
-  condition_Option:boolean = false
-  condition_Value:boolean = false
+  
 
      
   constructor(
@@ -58,9 +75,17 @@ export class AddInputFieldsComponent implements OnInit{
     private apiService:WorksApiService,
     private router:Router
   ) {  
-     
+
+    // =====Action_Form:Add_Action=============
     this.fieldForm = this.fb.group({  
-      fields: this.fb.array([]) ,  
+      fields: this.fb.array([
+        // this.fb.group                //display the fieldForm before click the add_action button
+        //  ({  
+        //     fieldName: '',  
+        //     fieldType: '',  
+        //     require:''
+        //   })    
+      ]) ,  
     });  
 
   }  ;
@@ -69,6 +94,7 @@ export class AddInputFieldsComponent implements OnInit{
   fields() : FormArray {  
     return this.fieldForm.get("fields") as FormArray  
   }  
+
   
   //add a new fields
   newField(): FormGroup {  
@@ -80,24 +106,66 @@ export class AddInputFieldsComponent implements OnInit{
   }  
      
   addField() {  
-    this.fields().push(this.newField());  
+    this.isAdd = true;
+    this.fields().push(this.newField());    
   }  
      
   removeField(i:number) {  
     this.fields().removeAt(i);  
-  }  
+  } ;
+
+  onSubmit() {  
+    this.isSubmitted = true;
+    this.fieldformData = this.fieldForm.value.fields
+    // console.log(this.fieldForm.value); 
+    console.log("fieldformData:",this.fieldformData); 
+    this.fieldForm.reset() 
+
+  
+    for(let i=0; i < this.fieldformData.length; i++){
+      console.log(this.fieldformData[i]); 
+      this.result.push({"name":this.fieldformData[i].fieldName, "field_type":this.fieldformData[i].fieldType,required:this.fieldformData[i].require,"actions":[],"conditions":[]})
+    }
+    console.log("Result:",this.result);
+  } 
 
  
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+      // Condition Form:
+    this.conditionForm = new FormGroup({
+      conditionFormFields:new FormArray([])
+    // field_Name:new FormControl(''),
+    // field_Operator:new FormControl(''),
+    // field_Value:new FormControl('')
+})
+  };
+ 
+  //find the conditionFormFields in conditionForm
+  conditionFormFields(): FormArray {
+    return this.conditionForm.get('conditionFormFields') as FormArray
+  }
+  //Add a new fields
+  newConditionField():FormGroup {
+    return new FormGroup({
+      field_Name:new FormControl(''),
+      field_Operator:new FormControl(''),
+      field_Value:new FormControl('')
+    })
+  }
 
+  addConditionField(){
+    this.isPlusSubmitted = true
+    this.conditionFormFields().push(this.newConditionField())
+  }
+
+  // Action Form
   emailForm = new FormGroup({
     body:new FormControl(''),
     subject:new FormControl(''),
     to:new FormControl('')
   });
 
-  // send_message:
   messageForm = new FormGroup({
     body:new FormControl(''),
     to:new FormControl('')
@@ -118,6 +186,7 @@ export class AddInputFieldsComponent implements OnInit{
 
 
 
+
   // getDataById(){
   //   this.apiService.getDataById()
   //   .subscribe(data => {
@@ -135,9 +204,6 @@ export class AddInputFieldsComponent implements OnInit{
     this.actionValue = true
     this.conditionValue = false
     // console.log("event",e.target.value);
-    this.condition_Value = false
-    this.condition_Field = false
-    this.condition_Option = false;
    }
    if(e.target.value==="Conditions"){
     this.conditionValue = true
@@ -158,10 +224,6 @@ export class AddInputFieldsComponent implements OnInit{
     this.api_Form= false
     this.workflow_Form= false
     this.logic_Form= false
-
-    this.condition_Value = false
-    this.condition_Field = false
-    this.condition_Option = false;
     // console.log("Email_event",e.target.value);
    };
    if(e.target.value === "send_Message"){
@@ -170,10 +232,6 @@ export class AddInputFieldsComponent implements OnInit{
     this.api_Form= false
     this.workflow_Form= false
     this.logic_Form= false;
-
-    this.condition_Value = false
-    this.condition_Field = false
-    this.condition_Option = false;
     // console.log("Email_event",e.target.value);
    };
    if(e.target.value === "call_api"){
@@ -182,10 +240,6 @@ export class AddInputFieldsComponent implements OnInit{
     this.message_Form= false
     this.workflow_Form= false
     this.logic_Form= false;
-
-    this.condition_Value = false
-    this.condition_Field = false
-    this.condition_Option = false;
     // console.log("Email_event",e.target.value);
    };
    if(e.target.value === "call_Workflow"){
@@ -195,9 +249,7 @@ export class AddInputFieldsComponent implements OnInit{
     this.api_Form= false
     this.logic_Form= false;
 
-    this.condition_Value = false
-    this.condition_Field = false
-    this.condition_Option = false;
+   
     // console.log("Email_event",e.target.value);
    };
    if(e.target.value === "custom_logic"){
@@ -205,101 +257,120 @@ export class AddInputFieldsComponent implements OnInit{
     this.email_Form= false
     this.message_Form= false
     this.api_Form= false
-    this.workflow_Form= false;
-
-    this.condition_Value = false
-    this.condition_Field = false
-    this.condition_Option = false;
+    this.workflow_Form= false;  
     // console.log("Email_event",e.target.value);
    }
   }
-
-  changedConditions(e:any){
-    if(e.target.value === 'fields'){
-      this.condition_Field = true
-      this.condition_Option = false;
-      this.condition_Value = false;
-
-      this.logic_Form= false;
-      this.email_Form= false
-      this.message_Form= false
-      this.api_Form= false
-      this.workflow_Form= false;
-    }
-    if(e.target.value === 'options'){
-      this.condition_Option = true;
-      this.condition_Field = false      
-      this.condition_Value = false;
-
-      this.logic_Form= false;
-      this.email_Form= false
-      this.message_Form= false
-      this.api_Form= false
-      this.workflow_Form= false;
-    };
-    if(e.target.value === 'value'){
-      this.condition_Value = true
-      this.condition_Field = false
-      this.condition_Option = false;
-
-      this.logic_Form= false;
-      this.email_Form= false
-      this.message_Form= false
-      this.api_Form= false
-      this.workflow_Form= false;
-    }
-
-  }
   
+
+  changeFieldType(e: any) { 
+    let  fieldType = this.fieldForm.get('fieldType');
+     fieldType?.setValue(e.target.value, {
+       onlySelf: true,
+     });
+   };
+
+
      
-  onSubmit() {  
-    console.log(this.fieldForm.value);  
-  }  
+  
 
   emailSubmit(){
 console.log(this.emailForm.value);
+if(this.emailForm){
+  for(let i=0; i<this.result.length;i++){
+    this.result[i].actions.push({"body":this.emailForm.value.body, "subject":this.emailForm.value.subject, "to":this.emailForm.value.to})   
+  }
+}
+console.log("Result:", this.result);
   }
 
   messageSubmit(){
     console.log(this.messageForm.value);
+    if(this.messageForm){
+      for(let i=0; i<this.result.length;i++){
+        this.result[i].actions.push({"body":this.messageForm.value.body, "to":this.messageForm.value.to})   
+      }
+    }
+    console.log("Result:", this.result);
   };
 
   apiSubmit(){
     console.log(this.apiForm.value);
+if(this.apiForm){
+  for(let i=0; i<this.result.length;i++){
+    this.result[i].actions.push({"body":this.apiForm.value.body, "url":this.apiForm.value.url, "type":this.apiForm.value.type})   
+  }
+}
+console.log("Result:", this.result);
   }
 
   workflowSubmit(){
     console.log(this.workflowForm.value);
+    if(this.workflowForm){
+      for(let i=0; i<this.result.length;i++){
+        this.result[i].actions.push({"workflow":this.workflowForm.value.workflow, "input_Value":this.workflowForm.value.input_Value})   
+      }
+    }
+    console.log("Result:", this.result);
   };
 
   logicSubmit(){
     console.log(this.logicForm.value);
+    if(this.logicForm){
+      for(let i=0; i<this.result.length;i++){
+        this.result[i].actions.push({"logic":this.logicForm.value})   
+      }
+    }
+    console.log("Result:", this.result);
   }
 
 
 
 
+changeFieldName(e: any) { 
+//  let  field_Name = this.conditionForm.get('conditionFormFields').controls ;
+//   field_Name?.setValue(e.target.value, {
+//     onlySelf: true,
+//   });
+//   console.log("field_Name",field_Name);
+};
 
-  registrationForm = this.fb.group({
-    cityName: ['', [Validators.required]],
-  });
-  changeCity(e: any) {
-    this.cityName?.setValue(e.target.value, {
-      onlySelf: true,
-    });
-  }
-  // Access formcontrols getter
-  get cityName() {
-    return this.registrationForm.get('cityName');
-  }
+
+
+ changeOperatorType(e: any) { 
+  // let  field_Operator = this.conditionForm.get('field_Operator');
+  //  field_Operator?.setValue(e.target.value, {
+  //    onlySelf: true,
+  //  });
+  //  console.log("Field_Operator",field_Operator);
+ }
+
+
+
+
   conditionSubmit(): void {
-    console.log(this.registrationForm);
+    console.log(this.conditionForm.value);
     this.isSubmitted = true;
-    if (!this.registrationForm.valid) {
+    this.isSubmittedCondition = true
+    this.conditionFormData = this.conditionForm.value.conditionFormFields
+    console.log("Condition_Array:",this.conditionFormData);
+    if (!this.conditionForm.valid) {
       false;
     } else {
-      console.log(JSON.stringify(this.registrationForm.value));
+      // console.log("Conditionform value:",JSON.stringify(this.conditionForm.value));
     }
+
+    // this.result = [new Set([...this.fieldformData,this.conditionFormData])]
+
+    if(this.conditionFormData){
+      for(let i=0; i<this.result.length;i++){
+        if(this.result[i].name === this.conditionFormData[i].field_Name){
+          this.result[i].conditions.push({"operator":this.conditionFormData[i].field_Operator, "value":this.conditionFormData[i].field_Value})
+        }
+      }
+    }
+console.log("Result:", this.result);
+    
   }
 
 }

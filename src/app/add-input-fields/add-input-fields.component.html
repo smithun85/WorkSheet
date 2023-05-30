@@ -13,7 +13,7 @@
       </tr>
     </tbody>
   </table> -->
-<h2 class="heading"><span>Workflow</span></h2>
+  <h2 class="heading"><span>Workflow</span></h2>
   <form [formGroup]="fieldForm" (ngSubmit)="onSubmit()">
     <table class="table table-bordered" formArrayName="fields">
       <tbody>
@@ -30,114 +30,149 @@
             />
           </td>
           <td>
-            <input
-              type="text"
-              placeholder="Field_type"
-              formControlName="fieldType"
-              class="form-control"
-            />
+            <div class="condtion-selection">
+              <select class="custom-select" formControlName="fieldType">
+                <option class="disable-option" selected>
+                  Choose Field_Type
+                </option>
+                <option *ngFor="let type of fieldsType">
+                  {{ type }}
+                </option>
+              </select>
+            </div>
+          </td>
+          <td class="custom-radio">
+            <label>Require:</label>
+            <div>
+              <input type="radio" formControlName="require" value="true" /> yes
+              <input type="radio" formControlName="require" value="false" /> no
+            </div>
           </td>
           <td>
-            <input
-              type="text"
-              placeholder="Required"
-              formControlName="require"
-              class="form-control"
-            />
-            
-          </td>
-          <!-- <td>
             <button (click)="removeField(i)" class="btn btn-danger">
               Remove
             </button>
-          </td> -->
+          </td>
         </tr>
-        <button type="button" (click)="addField()" class="btn btn-primary">
-          Add action Field
-        </button>
       </tbody>
     </table>
+    <div class="btn-field mb-3">
+      <button type="button" (click)="addField()" class="btn btn-primary">
+        Add more action Field
+      </button>
+      <button class="btn btn-primary" *ngIf="isAdd">Submit</button>
+    </div>
   </form>
 
-  <div class="select-option">
-    <div class="select-1">
-      <select
-        class="btn btn-primary"  aria-label="Default select example"
-        (change)="changedOption($event)"
-              
-      >
-        <option  class="disabled" disabled selected>Select</option>
-        <option [ngValue]="item"  *ngFor="let item of workflow">{{item}}</option>
-      </select>
-    </div>
+  <!-- ======Select============= -->
+  <div *ngIf="isSubmitted">
+    <div class="select-option">
+      <div class="select-1">
+        <select
+          class="btn btn-primary select-menu"
+          (change)="changedOption($event)"
+        >
+          <option class="disable-option" disabled selected>Select</option>
+          <option [ngValue]="item" *ngFor="let item of workflow">
+            {{ item }}
+          </option>
+        </select>
+      </div>
+      <!-- Actions selection -->
+      <div *ngIf="actionValue" class="select-1">
+        <select
+          class="btn btn-success select-menu"
+          (change)="changedActions($event)"
+        >
+          <option class="disable-option" disabled selected>
+            Select Actions
+          </option>
+          <option [ngValue]="item.action" *ngFor="let item of actions">
+            {{ item.action }}
+          </option>
+        </select>
+      </div>
+      <!-- Condition selection   -->
+      <div class="select-1" *ngIf="conditionValue">
+        <form [formGroup]="conditionForm"  (ngSubmit)="conditionSubmit()">
+          <div formArrayName="conditionFormFields">
+            <div
+              class="condtion"
+              *ngFor="
+                let operator of conditionFormFields().controls;
+                let i = index
+              "
+              [formGroupName]="i"
+            >
+              <div class="condtion-selection">
+                <select class="custom-select" formControlName="field_Name">
+                  <option class="disable-option" selected>
+                    Choose Field_Name
+                  </option>
+                  <option *ngFor="let field of fieldformData">
+                    {{ field.fieldName }}
+                  </option>
+                </select>
+              </div>
+              <div class="condtion-selection">
+                <select class="custom-select" formControlName="field_Operator">
+                  <option class="disable-option" selected>
+                    Choose operator
+                  </option>
+                  <option *ngFor="let operator of condition_Operator">
+                    {{ operator.symbol }}
+                  </option>
+                </select>
+              </div>
 
-    <div *ngIf="actionValue" class="select-1">
-      <select class="btn btn-success" (change)="changedActions($event)">
-        <option class="disabled" disabled selected>Select Actions</option>
-        <option [ngValue]="item.action" *ngFor="let item of actions">
-          {{ item.action }}
-        </option>
-      </select>
-    </div>
-
-    <div *ngIf="conditionValue" class="select-1">
-      <!-- <select class="btn btn-success" (change)="changedConditions($event)">
-        <option class="disabled" disabled selected>Select Conditions</option>
-        <option [ngValue]="item.condition" *ngFor="let item of conditions">
-          {{ item.condition }}
-        </option>
-      </select> -->
-     
-      <form [formGroup]="registrationForm" (ngSubmit)="conditionSubmit()">
-      
-        <div class="d-grid">
-          <select
-            class="custom-select mb-3"
-            (change)="changeCity($event)"
-            formControlName="cityName"
-          >
-            <option value="">Choose Field_Name</option>
-            <option *ngFor="let field of fieldsName" [ngValue]="field">
-              {{ field }}
-            </option>
-          </select>
-          <!-- error block -->
-          <div class="invalid-feedback" *ngIf="isSubmitted && cityName?.invalid">
-            <sup>*</sup>Please provide city name
+              <div>
+                <input
+                  type="type"
+                  class="form-control"
+                  placeholder="value"
+                  formControlName="field_Value"
+                />
+              </div>
+            </div>
+            <div class="plus-btn">
+              <button
+              type="button"
+              class="plus"
+              (click)="addConditionField()"
+            >
+             +
+            </button>
+            <button type="submit" class="btn btn-danger btn-lg btn-block" *ngIf="isPlusSubmitted">
+              Submit
+            </button>
+            </div>
           </div>
-        </div>
-        <div class="d-grid">
-          <select
-            class="custom-select mb-3"
-            (change)="changeCity($event)"
-            formControlName="cityName"
-          >
-            <option value="">Choose Field_Name</option>
-            <option *ngFor="let field of fieldsName" [ngValue]="field">
-              {{ field }}
-            </option>
-          </select>
-          <!-- error block -->
-          <div class="invalid-feedback" *ngIf="isSubmitted && cityName?.invalid">
-            <sup>*</sup>Please provide city name
-          </div>
-         
-        </div>
+        </form>
 
-        <div class="mb-3">
-          <input
-            type="type"
-            class="form-control"
-            placeholder="value"
-            formControlName="value"
-          />
-        </div>
-        <button type="submit" class="btn btn-danger btn-lg btn-block">
-          Submit
-        </button>
-        
-      </form>
+         <!-- ================= Condition_form table view ================= -->
+    <table class="table table-bordered" *ngIf="isSubmittedCondition">
+      <thead>
+        <tr>
+          <th>field Name</th>
+          <th>Field Type</th>
+          <th>Required</th>
+          <th>Operator</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody let *ngFor="let item of result; let i = index">
+        <tr let *ngFor="let conditions of result[i].conditions">
+          <td>{{ item.name }}</td>
+          <td>{{ item.field_type }}</td>
+          <td>{{ item.required }}</td>
+          <td>{{ conditions.operator }}</td>
+          <td>{{ conditions.value }}</td>
+        </tr>
+      </tbody>
+    </table>
+      </div>
     </div>
+   
   </div>
 
   <!-- =======ACTIONS:Form========== -->
@@ -173,17 +208,40 @@
           <button>Submit</button>
         </form>
         <p></p>
-        <div>{{emailForm.value | json }}</div>
+        <!-- <div>{{ emailForm.value | json }}</div> -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>field Name</th>
+              <th>Field Type</th>
+              <th>Required</th>
+              <th>Body</th>
+              <th>Subject</th>
+              <th>to</th>
+            </tr>
+          </thead>
+          <tbody let *ngFor="let item of result; let i = index">
+            <tr let *ngFor="let actions of result[i].actions">
+              <td>{{ item.name }}</td>
+              <td>{{ item.field_type }}</td>
+              <td>{{ item.required }}</td>
+              <td>{{ actions.body }}</td>
+              <td>{{ actions.subject }}</td>
+              <td>{{ actions.to }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-
-
-   
 
     <div class="action-form" *ngIf="message_Form">
       <h2>Message</h2>
       <div class="common-form">
-        <form class="form" [formGroup]="messageForm" (ngSubmit)=" messageSubmit()">
+        <form
+          class="form"
+          [formGroup]="messageForm"
+          (ngSubmit)="messageSubmit()"
+        >
           <div class="mb-3">
             <textarea
               class="form-control"
@@ -203,7 +261,27 @@
           <button>Submit</button>
         </form>
         <p></p>
-        <div>{{messageForm.value | json }}</div>
+        <!-- <div>{{ messageForm.value | json }}</div> -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>field Name</th>
+              <th>Field Type</th>
+              <th>Required</th>
+              <th>Body</th>
+              <th>to</th>
+            </tr>
+          </thead>
+          <tbody let *ngFor="let item of result; let i = index">
+            <tr let *ngFor="let actions of result[i].actions">
+              <td>{{ item.name }}</td>
+              <td>{{ item.field_type }}</td>
+              <td>{{ item.required }}</td>
+              <td>{{ actions.body }}</td>
+              <td>{{ actions.to }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -237,7 +315,29 @@
           </div>
           <button>Submit</button>
         </form>
-        <div>{{apiForm.value | json }}</div>
+        <!-- <div>{{ apiForm.value | json }}</div> -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>field Name</th>
+              <th>Field Type</th>
+              <th>Required</th>
+              <th>Url</th>
+              <th>Url_Type</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody let *ngFor="let item of result; let i = index">
+            <tr let *ngFor="let actions of result[i].actions">
+              <td>{{ item.name }}</td>
+              <td>{{ item.field_type }}</td>
+              <td>{{ item.required }}</td>
+              <td>{{ actions.url }}</td>
+              <td>{{ actions.type }}</td>
+              <td>{{ actions.body }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -269,7 +369,29 @@
           </div>
           <button>Submit</button>
         </form>
-        <div>{{workflowForm.value | json }}</div>
+        <!-- <div>{{ workflowForm.value | json }}</div> -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>field Name</th>
+              <th>Field Type</th>
+              <th>Required</th>
+              <th>Body</th>
+              <th>Workflow</th>
+              <th>input_Value</th>
+            </tr>
+          </thead>
+          <tbody let *ngFor="let item of result; let i = index">
+            <tr let *ngFor="let actions of result[i].actions">
+              <td>{{ item.name }}</td>
+              <td>{{ item.field_type }}</td>
+              <td>{{ item.required }}</td>
+              <td>{{ actions.body }}</td>
+              <td>{{ actions.workflow }}</td>
+              <td>{{ actions.input_Value }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -288,25 +410,26 @@
           </div>
           <button>Submit</button>
         </form>
-        <div>{{logicForm.value | json }}</div>
+        <!-- <div>{{ logicForm.value | json }}</div> -->
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>field Name</th>
+              <th>Field Type</th>
+              <th>Required</th>
+              <th>Logics</th>
+            </tr>
+          </thead>
+          <tbody let *ngFor="let item of result; let i = index">
+            <tr let *ngFor="let actions of result[i].actions">
+              <td>{{ item.name }}</td>
+              <td>{{ item.field_type }}</td>
+              <td>{{ item.required }}</td>
+              <td>{{ actions.logic }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-
-  <!-- =======CONDITIONS============= -->
-
-  <div class="condition-select">
-    <div class="condition" *ngIf="condition_Field">
-      <h2>Condtion for Fields</h2>
-    </div>
-
-    <div class="condition" *ngIf="condition_Option">
-      <h2>Conditions for options</h2>
-    </div>
-
-    <div class="condition" *ngIf="condition_Value">
-      <h2>Conditions for value</h2>
-    </div>
-  </div>
-
 </div>
