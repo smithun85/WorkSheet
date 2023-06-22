@@ -54,12 +54,45 @@
   </div>
 
 <!-- ======View_workSheet=============-->
+<pre>Sort by = {{sortType}}; reverse = {{reverse}}</pre>
+<div class="header ">
+  <div class="search d-flex">   
+    <input class="form-control me-2" type="search" [(ngModel)]="searchText" (input)="search()" placeholder="search by title..." aria-label="Search">
+    <button class="btn btn-outline-success" type="submit" (click)="onClickSearch(searchText)">Search</button>   
+  </div>
+
+  <div class="items-per-page">
+    <select class="form-select"  (change)="changeItemsPerPage($event.target)"  aria-label="Default select example" >
+      <option value =""  selected>select the items per page</option>
+      <option [value]="item" *ngFor="let item of limits let i=index">{{item}}</option>
+    </select>
+  </div>
+
+  <div class="city">
+    <select class="form-select" aria-label="Default select example" (change)="changeCity($event)">
+      <option value ="" selected>select City</option>
+      <option value="Ahmadabad">Ahmadabad</option>
+      <option value="Agra">Agra</option>
+      <option value="Jaipur">Jaipur</option>
+    </select>
+  </div>
+</div>
+
   <table class="table">
     <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Title</th>
-        <th scope="col">Description</th>
+      <tr class="sort">
+        <th scope="col" ><span (click)="sortClick('id')">#</span> </th>
+        <th scope="col"> <span (click)="sortClick('title')">Title</span>
+          <span class="sortorder descending" [hidden]="(sortType==='title' && reverse===true)"></span>
+          <span class="sortorder" [hidden]="(sortType==='title' && reverse===false)"></span>
+        </th>
+        <th scope="col"><span (click)="sortClick('description')">Description</span>
+          <span class="sortorder descending" [hidden]="(sortType==='description' && reverse==true)"></span>
+          <span class="sortorder" [hidden]="(sortType==='description' && reverse===false)"></span>
+        </th>
+        <th scope="col"><span (click)="sortClick('city')">City</span>
+          <span class="sortorder descending" [hidden]="(sortType==='city' && reverse==true)"></span>
+          <span class="sortorder" [hidden]="(sortType==='city' && reverse===false)"></span></th>
         <th scope="col">Action</th>
       </tr>
     </thead>
@@ -68,6 +101,7 @@
         <th scope="row">{{ work.id }}</th>
         <td>{{ work.title }}</td>
         <td>{{ work.description }}</td>
+        <td>{{work.city}}</td>
         <td>
           <!-- <button (click)="goToEditForm()">Edit</button> -->
           <div class="worksheet">
@@ -148,5 +182,14 @@
       </tr>
     </tbody>
   </table>
+
+  <pagination
+  [boundaryLinks]="showBoundaryLinks"
+  [totalItems]="count"
+  [itemsPerPage]="limit"
+  (pageChanged)="changePage($event)"
+  [rotate]="rotate"
+  [maxSize]="maxSize"
+></pagination>
 
 </div>

@@ -2,6 +2,20 @@
     margin-right: 20px;
 }
 
-.btn{
-    
+
+.sort{
+    cursor: pointer;
+}
+
+
+.sortorder:after {
+    content: '\25b2';
+} 
+.sortorder.descending:after {
+    content: '\25bc';
+}
+
+.header{
+    display: flex;
+    gap: 30px;
 }

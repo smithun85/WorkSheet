@@ -1,5 +1,6 @@
 export interface Works {
     id:number,
     title:string,
-    description:string
+    description:string,
+    city:string
 }

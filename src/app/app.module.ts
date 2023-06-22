@@ -17,6 +17,7 @@ import { ActionFormsModule } from './action-forms/action-forms.module';
 //modelModule:
 import { ModalModule } from 'ngx-bootstrap/modal';
 
+
 //Components
 import { ViewListComponent } from './view-list/view-list.component';
 import { LayoutsComponent } from './layouts/layouts.component';
@@ -28,6 +29,9 @@ import { AddInputFieldsComponent } from './add-input-fields/add-input-fields.com
 //dropdown
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgxSelectModule } from 'ngx-select-ex';
+
+//Pagination
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 
 
@@ -52,6 +56,7 @@ import { NgxSelectModule } from 'ngx-select-ex';
     BsDropdownModule.forRoot(),
     ActionFormsModule,
     NgxSelectModule,
+    PaginationModule.forRoot(),
    
   ],
   providers: [],
