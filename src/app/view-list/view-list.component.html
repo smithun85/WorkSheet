@@ -23,7 +23,7 @@
           <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">Title</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="exampleFormControlInput1"
               placeholder="title"
@@ -41,6 +41,16 @@
               placeholder="Description"
               formControlName="description"
             ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">City</label>
+            <input
+              type="text"
+              class="form-control"
+              id="exampleFormControlInput1"
+              placeholder="city"
+              formControlName="city"
+            />
           </div>
           <div class="btn">
             <button class="btn btn-primary margin-right" (click)="modalRef?.hide()" >Submit</button>
@@ -69,7 +79,7 @@
   </div>
 
   <div class="city">
-    <select class="form-select" aria-label="Default select example" (change)="changeCity($event)">
+    <select class="form-select" (change)="changeCity($event)" aria-label="Default select example" >
       <option value ="" selected>select City</option>
       <option value="Ahmadabad">Ahmadabad</option>
       <option value="Agra">Agra</option>
@@ -164,6 +174,17 @@
                       formControlName="description"
                     ></textarea>
                   </div>
+                  <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">City</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="exampleFormControlInput1"
+                      placeholder="city"
+                      formControlName="city"
+                    />
+                  </div>
+
                   <div class="btn">
                     <button class="btn btn-primary margin-right" (click)="modalRef?.hide()" >Update</button>
                     <button

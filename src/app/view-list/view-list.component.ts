@@ -47,7 +47,8 @@ export class ViewListComponent implements OnInit{
       this.workListForm = new FormGroup({
         id:new FormControl(''),
         title:new FormControl(''),
-        description:new FormControl('')
+        description:new FormControl(''),
+        city:new FormControl('')
       });
     }
 
@@ -57,15 +58,14 @@ export class ViewListComponent implements OnInit{
     
     this.getData(); 
     this.workData = this.workData.slice(0,this.limit)   
-    this.filteredCity = this.filteredCity.slice(0,this.limit)   
+    this.filteredCity = this.filteredCity.slice(0,this.limit) 
   }
 
   openModalAdd(add: TemplateRef<any>) {
     this.modalRef = this.modalService.show(add);
     this.workListForm.reset()
   }
-
-  
+ 
   resetForm(){
     this.workListForm.reset()
   }
@@ -73,14 +73,15 @@ export class ViewListComponent implements OnInit{
   openModalEdit(edit: TemplateRef<any>, id:number) {
     this.modalRef = this.modalService.show(edit);
 
-    console.log(this.workData);
+    // console.log(this.workData);
     this.workData.map( (item:any, i:number)=>{
-      console.log(item);
+      // console.log(item);
      
        if(item.id== id){
         this.workUpdatedData = {
           title:item.title,
           description:item.description,
+          city:item.city,
           id:item.id
         }
        }
@@ -99,15 +100,18 @@ getData(){
   // console.log(data.WorkFlow)
   this.workData = data.WorkFlow;
   // this.count = data.count
-  this.count = this.workData.length
+  this.count = this.workData.length;
 
-  //filter city
   this.filteredCity = data.WorkFlow.filter(
     (data:any) =>{  
       return data.city.toLowerCase().includes(this.city)                      
     });
-    // console.log("filteredCity",this.filteredCity);
-    // console.log("city:",this.city);
+
+   if(this.workListForm){
+    this.filterCity();
+    this.paginate()
+   }
+ 
   
     //pagination 
     let startItem = (this.currentPage-1) * this.limit;
@@ -117,6 +121,34 @@ getData(){
     // console.log("returnedLimitedItems", this.returnedLimitedItems);
    
   });
+}
+
+//filter city
+filterCity(){
+  this.api.getAllData()
+  .subscribe(
+    data => {
+      this.workData = data.WorkFlow.filter(
+    (data:any) =>{  
+      return data.city.toLowerCase().includes(this.city)                      
+    });
+    this.count = this.workData.length
+     // console.log("filteredCity",this.filteredCity);
+    // console.log("city:",this.city);
+    })
+}
+
+ //pagination 
+paginate(){
+  this.api.getAllData()
+  .subscribe(
+    data => {   
+    let startItem = (this.currentPage-1) * this.limit;
+    let endItem = this.currentPage * this.limit;
+    this.workData = data.WorkFlow.slice(startItem,endItem)
+    // console.log(startItem,endItem);
+    // console.log("returnedLimitedItems", this.workData);
+  })
 }
 
 
@@ -167,24 +199,20 @@ getData(){
   
    //Pagination
    changePage(event:PageChangedEvent ){
-   
+    
     this.currentPage = event.page;
     this.limit = event.itemsPerPage
     // console.log('Current_Page:',event.page);
     // console.log("currentPage,itemperpage:",this.currentPage, this.limit);
   
     if(this.city){
-    
-      this.getData()    
-      this.workData = this.filteredCity
-      this.count = this.workData.length 
-      
+     
+     this.filterCity();
       let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
     }else{
-      this.getData();
-     
+      this.getData();     
       this.workData = this.returnedLimitedItems
     }
    
@@ -249,29 +277,30 @@ getData(){
     this.limit = e.value
     // this.api.postTitleAndPagination( this.currentPage , this.limit,this.sortBy,this.sortType,this.searchText, this.city).subscribe( res => console.log(res)) 
     if(this.city){
+      this.getData();       
+     this.filterCity();
     
-      this.getData()    
-      this.workData = this.filteredCity
-      this.count = this.workData.length 
-      
       let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
     }else{
       this.getData();    
-      this.workData = this.returnedLimitedItems
+      // this.paginate()    
     }
   };
 
   changeCity(e:any){
-    this.city = e.target.value.toLowerCase()   
-    if(this.city){
+    this.city = e.target.value.toLowerCase()  
+    
+    if(this.city ){
       this.getData()
       this.workData = this.filteredCity
     this.count = this.workData.length 
-
+   
+    this.currentPage = 1
+    console.log(this.currentPage);
     let startItem = (this.currentPage-1) * this.limit;
-    let endItem = this.currentPage * this.limit;
+    let endItem = this.currentPage * this.limit; 
     this.workData = this.workData.slice(startItem ,endItem )
     }else{
       this.getData();
