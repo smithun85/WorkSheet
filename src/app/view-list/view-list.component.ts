@@ -131,7 +131,7 @@ getData(){
     // console.log("returnedLimitedItems", this.returnedLimitedItems);
 
     this.sortClick(this.sortType);  //default sorting
-  
+
     if(this.workListForm){
       this.filterCity();
       this.paginate()
@@ -225,7 +225,6 @@ paginate(){
   
     if(this.city){
      this.filterCity();
-    
       let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
@@ -323,7 +322,7 @@ paginate(){
     this.limit = e.value
     // this.api.postTitleAndPagination( this.currentPage , this.limit,this.sortBy,this.sortType,this.searchText, this.city).subscribe( res => console.log(res)) 
     if(this.city ){
-    
+      this.currentPage = 1
      this.filterCity();
     let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
@@ -339,24 +338,21 @@ paginate(){
     console.warn(e.target.value)
      console.log("currentPage:" , this.currentPage);
 
-    if(this.city ){
-
-      this.currentPage = 1
-      this.getData()
-      console.log("currentPage from changeCity:" , this.currentPage);
+    if(this.city ){  
+      this.getData()  
       this.workData = this.filteredCity
       this.onClickSearch(this.searchText)
       console.log("FilteredData:", this.workData);
       this.count = this.workData.length 
       
+      this.currentPage = 1
+      console.log("currentPage from changeCity:" , this.currentPage);
       let startItem = (this.currentPage-1) * this.limit;
       let endItem = this.currentPage * this.limit; 
       console.log(startItem,endItem);
       this.workData = this.workData.slice(startItem ,endItem )
       console.log( this.workData );
      
-    }else{
-      this.getData();
     }
    
   }
