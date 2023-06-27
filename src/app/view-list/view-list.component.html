@@ -5,10 +5,11 @@
     <button type="button" class="btn btn-primary" (click)="openModalAdd(add)">
       Add
     </button>
-  
+
     <ng-template #add>
       <div class="modal-header">
-        <h4 class="modal-title pull-left">Add Work-List</h4>
+        <h4 class="modal-title pull-left" *ngIf="isAdded">Add Work-List</h4>
+        <!-- <h4 class="modal-title pull-left" *ngIf="isEditted">Update WorkList</h4> -->
         <button
           type="button"
           class="btn-close close pull-right"
@@ -19,9 +20,15 @@
         </button>
       </div>
       <div class="modal-body">
-        <form class="form" [formGroup]="workListForm" (ngSubmit)="onSubmitAdd()">
+        <form
+          class="form"
+          [formGroup]="workListForm"
+          (ngSubmit)="onSubmitAdd()"
+        >
           <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Title</label>
+            <label for="exampleFormControlInput1" class="form-label"
+              >Title</label
+            >
             <input
               type="text"
               class="form-control"
@@ -43,18 +50,55 @@
             ></textarea>
           </div>
           <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">City</label>
-            <input
+            <label for="exampleFormControlInput1" class="form-label"
+              >City</label
+            >
+            <!-- <input
               type="text"
               class="form-control"
               id="exampleFormControlInput1"
               placeholder="city"
               formControlName="city"
-            />
+            /> -->
+            <select
+            class="form-select"
+            (change)="changeCity($event)"
+            formControlName="city"
+            aria-label="Default select example"
+          >
+            <option value="null" selected>select City</option>
+            <option value="Ahmadabad">Ahmadabad</option>
+            <option value="Agra">Agra</option>
+            <option value="Jaipur">Jaipur</option>
+          </select>
           </div>
-          <div class="btn">
-            <button class="btn btn-primary margin-right" (click)="modalRef?.hide()" >Submit</button>
-            <button type="button" class="btn btn-secondary" (click)="resetForm()">
+        
+         
+         
+          
+          
+          <div class="btn" >
+            <button
+              type="submit"
+              *ngIf="isAdded"
+              class="btn btn-primary margin-right"
+              (click)="modalRef?.hide()"
+            >
+              Submit
+            </button>
+            <!-- <button
+              type="submit"
+              *ngIf="isEditted"
+              class="btn btn-primary margin-right"
+              (click)="onSubmitEdit(work.id); modalRef?.hide()"
+            >
+              Update
+            </button> -->
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="resetForm()"
+            >
               Reset
             </button>
           </div>
@@ -63,154 +107,218 @@
     </ng-template>
   </div>
 
-<!-- ======View_workSheet=============-->
-<pre>Sort by = {{sortType}}; reverse = {{reverse}}</pre>
-<div class="header ">
-  <div class="search d-flex">   
-    <input class="form-control me-2" type="search" [(ngModel)]="searchText" (input)="search()" placeholder="search by title..." aria-label="Search">
-    <button class="btn btn-outline-success" type="submit" (click)="onClickSearch(searchText)">Search</button>   
-  </div>
+  <!-- ======View_workSheet=============-->
+  <pre>Sort by = {{ sortType }}; reverse = {{ reverse }}</pre>
+  <div class="header">
+    <div class="search d-flex">
+      <input
+        class="form-control me-2"
+        type="search"
+        [(ngModel)]="searchText"
+        (input)="search()"
+        placeholder="search by title..."
+        aria-label="Search"
+      />
+      <button
+        class="btn btn-outline-success"
+        type="submit"
+        (click)="onClickSearch(searchText)"
+      >
+        Search
+      </button>
+    </div>
 
-  <div class="items-per-page">
-    <select class="form-select"  (change)="changeItemsPerPage($event.target)"  aria-label="Default select example" >
-      <option value =""  selected>select the items per page</option>
-      <option [value]="item" *ngFor="let item of limits let i=index">{{item}}</option>
-    </select>
-  </div>
+    <div class="items-per-page">
+      <select
+        class="form-select"
+        (change)="changeItemsPerPage($event.target)"
+        aria-label="Default select example"
+      >
+        <!-- <option value ="null"  selected>{{limit}}</option> -->
+        <option [value]="item" *ngFor="let item of limits; let i = index">
+          {{ item }}
+        </option>
+      </select>
+    </div>
 
-  <div class="city">
-    <select class="form-select" (change)="changeCity($event)" aria-label="Default select example" >
-      <option value ="" selected>select City</option>
-      <option value="Ahmadabad">Ahmadabad</option>
-      <option value="Agra">Agra</option>
-      <option value="Jaipur">Jaipur</option>
-    </select>
+    <div class="city">
+      <select
+        class="form-select"
+        (change)="changeCity($event)"
+        aria-label="Default select example"
+      >
+        <option value="null" selected>select City</option>
+        <option value="Ahmadabad">Ahmadabad</option>
+        <option value="Agra">Agra</option>
+        <option value="Jaipur">Jaipur</option>
+      </select>
+    </div>
   </div>
-</div>
 
   <table class="table">
     <thead>
       <tr class="sort">
-        <th scope="col" ><span (click)="sortClick('id')">#</span> </th>
-        <th scope="col"> <span (click)="sortClick('title')">Title</span>
-          <span class="sortorder descending" [hidden]="(sortType==='title' && reverse===true)"></span>
-          <span class="sortorder" [hidden]="(sortType==='title' && reverse===false)"></span>
+        <th scope="col"><span (click)="sortClick('id')">#</span></th>
+        <th scope="col">
+          <span (click)="sortClick('title')">Title</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'title' && reverse === true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'title' && reverse === false"
+          ></span>
         </th>
-        <th scope="col"><span (click)="sortClick('description')">Description</span>
-          <span class="sortorder descending" [hidden]="(sortType==='description' && reverse==true)"></span>
-          <span class="sortorder" [hidden]="(sortType==='description' && reverse===false)"></span>
+        <th scope="col">
+          <span (click)="sortClick('description')">Description</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'description' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'description' && reverse === false"
+          ></span>
         </th>
-        <th scope="col"><span (click)="sortClick('city')">City</span>
-          <span class="sortorder descending" [hidden]="(sortType==='city' && reverse==true)"></span>
-          <span class="sortorder" [hidden]="(sortType==='city' && reverse===false)"></span></th>
+        <th scope="col">
+          <span (click)="sortClick('city')">City</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'city' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'city' && reverse === false"
+          ></span>
+        </th>
         <th scope="col">Action</th>
       </tr>
     </thead>
-    <tbody *ngFor="let work of workData">
-      <tr>
-        <th scope="row">{{ work.id }}</th>
-        <td>{{ work.title }}</td>
-        <td>{{ work.description }}</td>
-        <td>{{work.city}}</td>
-        <td>
-          <!-- <button (click)="goToEditForm()">Edit</button> -->
-          <div class="worksheet">
-            <!-- Modal -->
-            <button
-              type="button"
-              class="btn btn-primary margin-right"
-              (click)="openModalEdit(edit, work.id)"
-            >
-              edit
-            </button>
-  
-            <button
-              type="button"
-              class="btn btn-danger"
-              (click)="deleteWork(work.id)"
-            >
-              Delete
-            </button>
-  
-            <ng-template #edit>
-              <div class="modal-header">
-                <h4 class="modal-title pull-left">Update WorkList</h4>
-                <button
-                  type="button"
-                  class="btn-close close pull-right"
-                  aria-label="Close"
-                  (click)="modalRef?.hide()"
-                >
-                  <span aria-hidden="true" class="visually-hidden">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <form
-                  class="form"
-                  [formGroup]="workListForm"
-                  (ngSubmit)="onSubmitEdit(work.id)"
-                >
-                  <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label"
-                      >Title</label
-                    >
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="exampleFormControlInput1"
-                      placeholder="title"
-                      formControlName="title"
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label"
-                      >Description</label
-                    >
-                    <textarea
-                      class="form-control"
-                      id="exampleFormControlTextarea1"
-                      rows="3"
-                      placeholder="Description"
-                      formControlName="description"
-                    ></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">City</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="exampleFormControlInput1"
-                      placeholder="city"
-                      formControlName="city"
-                    />
-                  </div>
+    <div *ngIf="dataAvailable; then printData; else empty"></div>
+    <ng-template #printData>
+      <tbody *ngFor="let work of workData">
+        <tr>
+          <th scope="row">{{ work.id }}</th>
+          <td>{{ work.title }}</td>
+          <td>{{ work.description }}</td>
+          <td>{{ work.city }}</td>
+          <td>
+            <!-- <button (click)="goToEditForm()">Edit</button> -->
+            <div class="worksheet">
+              <!-- Modal -->
+              <button
+                type="button"
+                class="btn btn-primary margin-right"
+                (click)="openModalEdit(edit, work.id)"
+              >
+                edit
+              </button>
 
-                  <div class="btn">
-                    <button class="btn btn-primary margin-right" (click)="modalRef?.hide()" >Update</button>
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      (click)="resetForm()"
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="deleteWork(work.id)"
+              >
+                Delete
+              </button>
+
+              <ng-template #edit>
+                <div class="modal-header">
+                  <h4 class="modal-title pull-left">Update WorkList</h4>
+                  <button
+                    type="button"
+                    class="btn-close close pull-right"
+                    aria-label="Close"
+                    (click)="modalRef?.hide()"
+                  >
+                    <span aria-hidden="true" class="visually-hidden"
+                      >&times;</span
                     >
-                      Reset
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </ng-template>
-          </div>
-        </td>
-      </tr>
-    </tbody>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form
+                    class="form"
+                    [formGroup]="workListForm"
+                    
+                  >
+                    <div class="mb-3">
+                      <label for="exampleFormControlInput1" class="form-label"
+                        >Title</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="exampleFormControlInput1"
+                        placeholder="title"
+                        formControlName="title"
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label
+                        for="exampleFormControlTextarea1"
+                        class="form-label"
+                        >Description</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="exampleFormControlTextarea1"
+                        rows="3"
+                        placeholder="Description"
+                        formControlName="description"
+                      ></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleFormControlInput1" class="form-label"
+                        >City</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="exampleFormControlInput1"
+                        placeholder="city"
+                        formControlName="city"
+                      />
+                    </div>
+
+                    <div class="btn">
+                      <button
+                        class="btn btn-primary margin-right"
+                        (click)="onSubmitEdit(work.id); modalRef?.hide()"
+                      >
+                        Update
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        (click)="resetForm()"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </ng-template>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </ng-template>
+    <ng-template #empty>
+      <h2 style="text-align: right">no data found !!!</h2>
+    </ng-template>
   </table>
 
   <pagination
-  [boundaryLinks]="showBoundaryLinks"
-  [totalItems]="count"
-  [itemsPerPage]="limit"
-  (pageChanged)="changePage($event)"
-  [rotate]="rotate"
-  [maxSize]="maxSize"
-></pagination>
-
+    [boundaryLinks]="showBoundaryLinks"
+    [totalItems]="count"
+    [itemsPerPage]="limit"
+    [rotate]="rotate"
+    [maxSize]="maxSize"
+    [(ngModel)]="currentPage"
+    name="currentPage"
+    (pageChanged)="changePage($event)"
+  ></pagination>
+  <button (click)="submit()">click</button>
 </div>

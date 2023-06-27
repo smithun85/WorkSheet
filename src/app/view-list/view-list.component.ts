@@ -22,6 +22,8 @@ export class ViewListComponent implements OnInit{
   filteredCity:Works[]=[]
   searchText:string = ''
   workUpdatedData:any = {}
+  isAdded:boolean=false;
+  isEditted:boolean = false
 
   //Pagination and sorting
   count:number = 0;
@@ -31,11 +33,14 @@ export class ViewListComponent implements OnInit{
   rotate:boolean = true;
   maxSize:number = this.count
   showBoundaryLinks: boolean = true;
+  dataAvailable = true;
+  // startItem:number = 0;
+  // endItem:number = 3
   
 
-  public sortType:string = "id";
+  public sortType:string = "title";
   public sortBy:string= "asc"
-  reverse:boolean = true;
+  reverse:boolean = false;
   city:string = ''
   
 
@@ -50,18 +55,22 @@ export class ViewListComponent implements OnInit{
         description:new FormControl(''),
         city:new FormControl('')
       });
+
+     
     }
 
    
 
   ngOnInit(): void {
-    
+   
     this.getData(); 
     this.workData = this.workData.slice(0,this.limit)   
-    this.filteredCity = this.filteredCity.slice(0,this.limit) 
+    this.filteredCity = this.filteredCity.slice(0,this.limit) ;
+    
   }
 
   openModalAdd(add: TemplateRef<any>) {
+    this.isAdded = true
     this.modalRef = this.modalService.show(add);
     this.workListForm.reset()
   }
@@ -71,6 +80,7 @@ export class ViewListComponent implements OnInit{
   }
 
   openModalEdit(edit: TemplateRef<any>, id:number) {
+    this.isEditted = true
     this.modalRef = this.modalService.show(edit);
 
     // console.log(this.workData);
@@ -101,17 +111,17 @@ getData(){
   this.workData = data.WorkFlow;
   // this.count = data.count
   this.count = this.workData.length;
+  console.log(this.count);
+ 
+  
 
   this.filteredCity = data.WorkFlow.filter(
     (data:any) =>{  
       return data.city.toLowerCase().includes(this.city)                      
-    });
+    }); 
+    console.log("filteredData:", this.filteredCity);
 
-   if(this.workListForm){
-    this.filterCity();
-    this.paginate()
-   }
- 
+    console.log("currentPage From getData():" , this.currentPage); 
   
     //pagination 
     let startItem = (this.currentPage-1) * this.limit;
@@ -119,8 +129,16 @@ getData(){
     this.returnedLimitedItems = data.WorkFlow.slice(startItem,endItem)
     // console.log(startItem,endItem);
     // console.log("returnedLimitedItems", this.returnedLimitedItems);
+
+    this.sortClick(this.sortType);  //default sorting
+  
+    if(this.workListForm){
+      this.filterCity();
+      this.paginate()
+     }
    
   });
+
 }
 
 //filter city
@@ -130,9 +148,11 @@ filterCity(){
     data => {
       this.workData = data.WorkFlow.filter(
     (data:any) =>{  
-      return data.city.toLowerCase().includes(this.city)                      
+      return data.city.toLowerCase().includes(this.city.toLowerCase())                      
     });
     this.count = this.workData.length
+    // this.dataAvailable = this.workData.filter(res => res.title).length > 0;
+    // console.log(this.dataAvailable );
      // console.log("filteredCity",this.filteredCity);
     // console.log("city:",this.city);
     })
@@ -146,6 +166,8 @@ paginate(){
     let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = data.WorkFlow.slice(startItem,endItem)
+
+    this.sortClick(this.sortType);
     // console.log(startItem,endItem);
     // console.log("returnedLimitedItems", this.workData);
   })
@@ -154,6 +176,7 @@ paginate(){
 
 //Post Work_Data
   onSubmitAdd(){
+    
     // console.log("Form_value",this.workListForm.value);
     this.api.postWorkData(this.workListForm.value)
     .subscribe( res =>{
@@ -168,10 +191,9 @@ paginate(){
     
    }
 
-
-
    
    onSubmitEdit(id:number){
+   
     this.api.updateWorkData(this.workListForm.value, id)
     .subscribe( res =>{
       console.log(res);
@@ -185,8 +207,6 @@ paginate(){
    };
    
 
-
-
    //Delete Work_data
    deleteWork(id:number){
     this.api.deleteWorkData(id)
@@ -196,24 +216,21 @@ paginate(){
    }
 
 
-  
    //Pagination
    changePage(event:PageChangedEvent ){
-    
     this.currentPage = event.page;
     this.limit = event.itemsPerPage
     // console.log('Current_Page:',event.page);
     // console.log("currentPage,itemperpage:",this.currentPage, this.limit);
   
     if(this.city){
-     
      this.filterCity();
+     
       let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
     }else{
       this.getData();     
-      this.workData = this.returnedLimitedItems
     }
    
    }
@@ -224,16 +241,30 @@ paginate(){
     this.sortType = key; 
     this.reverse = !this.reverse
 
-   let direction = this.reverse  ? 1 : -1;
-    this.workData.sort((a:any,b:any)=>{
-    if(a[key].toLowerCase().trim() < b[key].toLowerCase().trim()){   //a.key => not read b/c key is a dynamic data so use bracket notation
-      return -1 * direction
-    }else if(a[key].toLowerCase().trim() > b[key].toLowerCase().trim()){
-      return 1*direction
-    }else{
-      return 0;
-    }
-   })
+   let direction = !this.reverse  ? 1 : -1;
+   this.api.getAllData()
+  .subscribe(
+    data => {
+      this.workData = data.WorkFlow.sort((a:any,b:any)=>{
+        if(a[key].toLowerCase().trim() < b[key].toLowerCase().trim()){   //a.key => not read b/c key is a dynamic data so use bracket notation
+          return -1 * direction
+        }else if(a[key].toLowerCase().trim() > b[key].toLowerCase().trim()){
+          return 1*direction
+        }else{
+          return 0;
+        }
+       })
+       if(this.city){
+        this.filterCity();
+       }
+    });
+
+    let startItem = (this.currentPage-1) * this.limit;
+  let endItem = this.currentPage * this.limit;
+  this.workData = this.workData.slice(startItem ,endItem );
+
+
+    
   
     if(this.reverse == true){
        this.sortBy = 'asc';
@@ -246,66 +277,90 @@ paginate(){
   }
 
   //Search
- search(){  
-    if(this.searchText ===''){
-      this.getData()
-      this.workData = this.filteredCity
-      this.count = this.workData.length 
+ search(){    
+  let startItem = (this.currentPage-1) * this.limit;
+  let endItem = this.currentPage * this.limit;
+  if(this.searchText ===''){
+    
+    this.workData = this.filteredCity
+    this.count = this.workData.length  
+    this.dataAvailable = this.workData.length > 0; 
+  }
+  this.workData = this.workData.slice(startItem ,endItem ); 
 
-      let startItem = (this.currentPage-1) * this.limit;
-      let endItem = this.currentPage * this.limit;
-      this.workData = this.workData.slice(startItem ,endItem )
-    }
+
+
+  if(this.city && this.searchText !== ''){
+    this.filterCity();
+
+  this.workData = this.workData.slice(startItem ,endItem );
+  }
+  
   }
 
   onClickSearch(text:string){
-    this.api.postTitleAndPagination( this.currentPage , this.limit,this.sortBy,this.sortType,text,this.city).subscribe( res => console.log(res)) 
+   
+    this.api.postTitleAndPagination(this.currentPage , this.limit,this.sortBy,this.sortType,text,this.city).subscribe( res => console.log(res)) 
+    
     if(this.searchText !== ''){
-      let searchValue = this.searchText.toLowerCase();      
+      let searchValue = this.searchText.toLowerCase();  
+       
       this.workData = this.workData.filter(
         data =>{
           return data.title.toLowerCase().match(searchValue)
         }
-      )     
+      ) 
+      this.dataAvailable = this.workData.length > 0;
+      console.log(this.dataAvailable );   
     }
-    
-    
-   
+  
   }
 
   changeItemsPerPage(e:any){
+    console.log(e);
     this.limit = e.value
     // this.api.postTitleAndPagination( this.currentPage , this.limit,this.sortBy,this.sortType,this.searchText, this.city).subscribe( res => console.log(res)) 
-    if(this.city){
-      this.getData();       
-     this.filterCity();
+    if(this.city ){
     
-      let startItem = (this.currentPage-1) * this.limit;
+     this.filterCity();
+    let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
     }else{
-      this.getData();    
-      // this.paginate()    
+      this.getData();     
     }
   };
 
   changeCity(e:any){
+    // console.log(e);
     this.city = e.target.value.toLowerCase()  
-    
+    console.warn(e.target.value)
+     console.log("currentPage:" , this.currentPage);
+
     if(this.city ){
+
+      this.currentPage = 1
       this.getData()
+      console.log("currentPage from changeCity:" , this.currentPage);
       this.workData = this.filteredCity
-    this.count = this.workData.length 
-   
-    this.currentPage = 1
-    console.log(this.currentPage);
-    let startItem = (this.currentPage-1) * this.limit;
-    let endItem = this.currentPage * this.limit; 
-    this.workData = this.workData.slice(startItem ,endItem )
+      this.onClickSearch(this.searchText)
+      console.log("FilteredData:", this.workData);
+      this.count = this.workData.length 
+      
+      let startItem = (this.currentPage-1) * this.limit;
+      let endItem = this.currentPage * this.limit; 
+      console.log(startItem,endItem);
+      this.workData = this.workData.slice(startItem ,endItem )
+      console.log( this.workData );
+     
     }else{
       this.getData();
     }
-      
+   
+  }
+
+  submit(){
+    this.currentPage = 1
   }
 
 
