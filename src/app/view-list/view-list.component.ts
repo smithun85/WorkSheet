@@ -225,7 +225,7 @@ paginate(){
   
     if(this.city){
      this.filterCity();
-     
+    
       let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
@@ -280,13 +280,15 @@ paginate(){
  search(){    
   let startItem = (this.currentPage-1) * this.limit;
   let endItem = this.currentPage * this.limit;
-  if(this.searchText ===''){
-    
+  if(this.searchText ===''){   
     this.workData = this.filteredCity
     this.count = this.workData.length  
     this.dataAvailable = this.workData.length > 0; 
+    this.workData = this.workData.slice(startItem ,endItem ); 
+  }else{
+    this.getData()
   }
-  this.workData = this.workData.slice(startItem ,endItem ); 
+  
 
 
 
