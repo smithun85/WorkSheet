@@ -48,10 +48,6 @@ const routes: Routes = [
     component:CustomLogicComponent
   },
 
-
-
-
-
   { path: 'form',
    component: FormComponent
   },
@@ -64,6 +60,11 @@ const routes: Routes = [
   {
     path:'edit',
     component:EditWorksComponent
+  },
+
+  {
+    path:'currencyconverter',
+    loadChildren:()=>import('./currency-converter/currency-converter.module').then(m=>m.CurrencyConverterModule)
   }
 ];
 

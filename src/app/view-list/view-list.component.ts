@@ -124,4 +124,9 @@ getData(){
    }
 
 
+   openModalCurrencyConverter(){
+    this.router.navigate(['currencyconverter'])
+   }
+
+
 }

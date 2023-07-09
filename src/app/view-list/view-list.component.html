@@ -2,10 +2,14 @@
   <div class="worksheet">
     <!-- Modal -->
     <label for="">Add Works:</label>
+  <div class="button">
     <button type="button" class="btn btn-primary" (click)="openModalAdd(add)">
       Add
     </button>
+
+    <button  type="button" class="btn btn-danger" (click)="openModalCurrencyConverter()">Go to Currency Converter</button>
   
+  </div>
     <ng-template #add>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Add Work-List</h4>
