@@ -1,3 +1,292 @@
-<app-navbar></app-navbar>
+<div class="container">
+  <div class="header">
+    <div class="left-side">
+      <i class="fa-solid fa-users"></i>
+      <h2>User Details</h2>
+    </div>
+    <div class="search d-flex">
+      <input
+        class="form-control me-2"
+        type="search"
+        [(ngModel)]="searchText"
+        (input)="search(searchText)"
+        placeholder="search by name..."
+        aria-label="Search"
+      />
+      <i class="fa-solid fa-user-plus"></i>
+      <button class="btn btn-primary" (click)="openFormSignupModal(modal)">
+        Add_users
+      </button>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr class="sort">
+        <th><span (click)="sortClick('id')">#</span></th>
+        <th>
+          <span (click)="sortClick('name')">Name</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'name' && reverse === true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'name' && reverse === false"
+          ></span>
+        </th>
+        <th>
+          <span (click)="sortClick('address')">Address</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'address' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'address' && reverse === false"
+          ></span>
+        </th>
+        <th>
+          <span (click)="sortClick('email')">Email</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'email' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'email' && reverse === false"
+          ></span>
+        </th>
+        <th>
+          <span (click)="sortClick('mobile')">Mobile</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'mobile' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'mobile' && reverse === false"
+          ></span>
+        </th>
+        <th>
+          <span (click)="sortClick('city')">Gender</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'gender' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'gender' && reverse === false"
+          ></span>
+        </th>
+        <th>
+          <span (click)="sortClick('city')">City</span>
+          <span
+            class="sortorder descending"
+            [hidden]="sortType === 'city' && reverse == true"
+          ></span>
+          <span
+            class="sortorder"
+            [hidden]="sortType === 'city' && reverse === false"
+          ></span>
+        </th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <div *ngIf="search_Data_Available; then printData; else empty"></div>
+   <ng-template #printData>
+    <tbody>
+      <tr *ngFor="let user of userData">
+        <th>{{ user.id }}</th>
+        <td>{{ user.name }}</td>
+        <td>{{ user.address }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.mobile }}</td>
+        <td>{{ user.gender }}</td>
+        <td>{{ user.city }}</td>
+        <td>
+          <div class="worksheet">
+            <button type="button" class="btn btn-primary margin-right" (click)="openFormUpdateModal(modal, user.id)">
+              Edit
+            </button>
 
-<router-outlet class="main"></router-outlet>
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="openDeleteModal(deleteModal, user.id)"
+            >
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+   </ng-template>
+    <ng-template #empty>
+      <h2> data not found.......</h2>
+    </ng-template>
+  </table>
+
+<div class="bottom">
+  <div class="items-per-page">
+    <label>Rows per pages:</label>
+    <select
+      (change)="changeItemsPerPage($event.target)"
+    >
+      <!-- <option value ="null"  selected>{{limit}}</option> -->
+      <option [value]="item" *ngFor="let item of limits; let i = index">
+        {{ item }}
+      </option>
+    </select>
+  </div>
+  <div class="pagination">
+    <pagination
+    [boundaryLinks]="showBoundaryLinks"
+    [totalItems]="count"
+    [itemsPerPage]="limit"
+    [rotate]="rotate"
+    [maxSize]="maxSize"
+    [(ngModel)]="currentPage"
+    name="currentPage"
+    (pageChanged)="changePage($event)"
+  ></pagination>
+   </div>
+</div>
+
+  <!-- Form-Modals-->
+  <ng-template #modal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left" *ngIf="isAdded">Registration</h4>
+      <h4 class="modal-title pull-left" *ngIf="isEditted">Update</h4>
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="modalRef?.hide()"
+      >
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form class="form" [formGroup]="usersForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Name"
+            formControlName="name"
+          />
+        </div>
+        <div class="mb-3">
+          <textarea
+            class="form-control"
+            rows="3"
+            placeholder="Address"
+            formControlName="address"
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <input
+            type="email"
+            class="form-control"
+            placeholder="Email"
+            formControlName="email"
+          />
+        </div>
+        <div class="mb-3">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Mobile no"
+            formControlName="mobile"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" name="gender">Gender</label>
+          <div>
+            <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  formControlName="gender"
+                />
+                <label class="form-check-label">male</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  formControlName="gender"
+                />
+                <label class="form-check-label">female</label>
+              </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">City</label>
+          <select
+            class="form-select"
+            formControlName="city"
+            aria-label="Default select example"
+          >
+            <option value="null" selected>select City</option>
+            <option value="Ahmadabad">Ahmadabad</option>
+            <option value="Agra">Agra</option>
+            <option value="Jaipur">Jaipur</option>
+          </select>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" formControlName="conditions" >
+            <label class="form-check-label">
+              I agree to the company terms and policy.
+            </label>
+          </div>
+
+        <div class="form-btn">
+          <div *ngIf="isAdded">
+            <button
+            type="submit"
+            class="btn btn-primary margin-right"
+            (click)="modalRef?.hide()"
+          >
+            Signup
+          </button>
+          </div>
+         <div  *ngIf="isEditted">
+            <button
+            type="submit"
+            class="btn btn-primary margin-right"
+            (click)="modalRef?.hide()"
+          >
+            Update
+          </button>
+         </div>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+  <!-- delete-Modal -->
+  <ng-template #deleteModal>
+    <div class="delete-popup">
+      <div>
+        <i>delete</i>
+      <p>Are you sure ? Do you want to delete user Hiren</p>
+      <button
+      type="button"
+      (click)="modalRef?.hide()"
+    >
+      <span>CANCEL</span>
+    </button>
+      <button (click)="deleteUser(); modalRef?.hide()">DELETE</button>
+      </div>
+  </div>
+  </ng-template>
+</div>
