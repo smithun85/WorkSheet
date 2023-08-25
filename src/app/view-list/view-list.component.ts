@@ -54,15 +54,10 @@ export class ViewListComponent implements OnInit{
         title:new FormControl(''),
         description:new FormControl(''),
         city:new FormControl('')
-      });
-
-     
+      });    
     }
 
-   
-
-  ngOnInit(): void {
-   
+  ngOnInit(): void {   
     this.getData(); 
     this.workData = this.workData.slice(0,this.limit)   
     this.filteredCity = this.filteredCity.slice(0,this.limit) ;
@@ -131,7 +126,7 @@ getData(){
     // console.log("returnedLimitedItems", this.returnedLimitedItems);
 
     this.sortClick(this.sortType);  //default sorting
-
+  
     if(this.workListForm){
       this.filterCity();
       this.paginate()
@@ -151,6 +146,8 @@ filterCity(){
       return data.city.toLowerCase().includes(this.city.toLowerCase())                      
     });
     this.count = this.workData.length
+
+
     // this.dataAvailable = this.workData.filter(res => res.title).length > 0;
     // console.log(this.dataAvailable );
      // console.log("filteredCity",this.filteredCity);
@@ -217,7 +214,7 @@ paginate(){
 
 
    //Pagination
-   changePage(event:PageChangedEvent ){
+   changePage(event:PageChangedEvent){
     this.currentPage = event.page;
     this.limit = event.itemsPerPage
     // console.log('Current_Page:',event.page);
@@ -225,6 +222,7 @@ paginate(){
   
     if(this.city){
      this.filterCity();
+    
       let startItem = (this.currentPage-1) * this.limit;
     let endItem = this.currentPage * this.limit;
     this.workData = this.workData.slice(startItem ,endItem )
@@ -240,12 +238,14 @@ paginate(){
     this.sortType = key; 
     this.reverse = !this.reverse
 
-   let direction = !this.reverse  ? 1 : -1;
+   let direction = this.reverse  ? 1 : -1;
    this.api.getAllData()
   .subscribe(
     data => {
+      console.log(data.WorkFlow);
       this.workData = data.WorkFlow.sort((a:any,b:any)=>{
-        if(a[key].toLowerCase().trim() < b[key].toLowerCase().trim()){   //a.key => not read b/c key is a dynamic data so use bracket notation
+        console.log(a[key], b[key]);
+        if(a[key].toLowerCase().trim() < b[key].toLowerCase().trim()){   //a.key object=> not read b/c key is a dynamic data so use bracket notation
           return -1 * direction
         }else if(a[key].toLowerCase().trim() > b[key].toLowerCase().trim()){
           return 1*direction
